@@ -24,9 +24,10 @@ class NotificationController {
   }
 
   async update(req, res) {
-    // first, you need an ID to get updates
-    // second, the object to change
-    // third, if you want a select after updating
+    // findByIdAndUpdate params:
+    // first, you need an ID to select item
+    // second, the object's param to change
+    // third, if you want to return the updated object after updating
 
     const notification = await Notification.findByIdAndUpdate(
       req.params.id,
