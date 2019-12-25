@@ -8,6 +8,7 @@ import ProviderController from './app/controllers/ProviderController';
 import SessionController from './app/controllers/SessionController';
 import ScheduleController from './app/controllers/ScheduleController';
 import UserController from './app/controllers/UserController';
+import NotificationController from './app/controllers/NotificationController';
 
 import authMiddleware from './app/middlewares/auth';
 
@@ -22,16 +23,23 @@ routes.post('/sessions', SessionController.store);
 
 // routes with session
 routes.use(authMiddleware);
+
 // update user info
 routes.put('/users', UserController.update);
 
 routes.get('/providers', ProviderController.index);
-//create appointment
+
+//create and see appointment
 routes.post('/appointments', AppointmentController.store);
 routes.get('/appointments', AppointmentController.index);
-// store file like avatar
+
 routes.get('/schedule', ScheduleController.index);
 
+// notification routes
+routes.get('/notifications', NotificationController.index);
+routes.put('/notifications/:id', NotificationController.update);
+
+// store file like avatar
 routes.post('/files', upload.single('file'), FileController.store);
 
 export default routes;
