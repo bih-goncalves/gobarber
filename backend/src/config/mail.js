@@ -1,11 +1,11 @@
 // credentials used from mailtrap to test it
 export default {
-  host: 'smtp.mailtrap.io',
-  port: '2525',
+  host: process.env.MAIL_HOST,
+  port: process.env.MAIL_PORT,
   secure: false,
   auth: {
-    user: 'bcfa277b82d5e3',
-    pass: '6d05417af353f1',
+    user: process.env.MAIL_USER,
+    pass: process.env.MAIL_PASS,
   },
   default: {
     from: 'GoBarber Team <noreply@gobarber.com>',
