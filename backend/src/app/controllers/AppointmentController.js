@@ -1,6 +1,6 @@
 import * as Yup from 'yup';
 import { startOfHour, parseISO, isBefore, format, subHours } from 'date-fns';
-import pt from 'date-fns/locale/pt';
+import enUS from 'date-fns/locale/en-US';
 
 import Appointment from '../models/Appointment';
 import User from '../models/User';
@@ -95,17 +95,13 @@ class AppointmetController {
 
     // get user info to nitification
     const user = await User.findByPk(req.userId);
-    const formattedDate = format(
-      hourStart,
-      "'dia' dd 'de' MMMM', às' H:mm'h'",
-      {
-        locale: pt,
-      },
-    );
+    const formattedDate = format(hourStart, "MMMM dd', at' H:mm'h'", {
+      locale: enUS,
+    });
 
     // notify provider
     await Notification.create({
-      content: `Novo agendamento de ${user.name} para ${formattedDate}`,
+      content: `New appointment from ${user.name} for ${formattedDate}`,
       user: provider_id,
     });
 
@@ -114,7 +110,10 @@ class AppointmetController {
 
   async delete(req, res) {
     const appointment = await Appointment.findByPk(req.params.id, {
-      include: [{ model: User, as: 'provider', attributes: ['name', 'email'] }],
+      include: [
+        { model: User, as: 'provider', attributes: ['name', 'email'] },
+        { model: User, as: 'user', attributes: ['name'] },
+      ],
     });
 
     if (appointment.user_id !== req.userId) {
@@ -139,7 +138,14 @@ class AppointmetController {
     await Mail.sendMail({
       to: `${appointment.provider.name} <${appointment.provider.email}>`,
       subject: 'Canceling appointment',
-      text: 'You have a new cancelation',
+      template: 'cancellation',
+      context: {
+        provider: appointment.provider.name,
+        user: appointment.user.name,
+        date: format(appointment.date, "MMMM dd', at' H:mm'h'", {
+          locale: enUS,
+        }),
+      },
     });
 
     return res.json(appointment);
